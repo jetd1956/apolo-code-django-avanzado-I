@@ -13,12 +13,21 @@
                 <img src="{{ request.user.get_image }}" class="img-circle" alt="User Image">
             </div>
             <div class="info">
-                <a class="d-block">{{ request.user.get_short_name }}</a>
+{#                  <a class="d-block">{{ request.user.get_short_name }}</a>  #}
+                    <a class="d-block">{{ request.user.username }}</a>
             </div>
         </div>
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 <li class="nav-header">Mantenimientos</li>
+                <li class="nav-item">
+                    <a href="{% url 'company_update' %}" class="nav-link">
+                        <i class="nav-icon fas fa-building"></i>
+                        <p>
+                            Compañia
+                        </p>
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a href="{% url 'category_list' %}" class="nav-link">
                         <i class="nav-icon fas fa-truck-loading"></i>

@@ -2,7 +2,7 @@
 
 export FECHA=`date +%d_%m_%Y_%H_%M_%S`
 export NAME=apolo_${FECHA}.dump
-export DIR=/home/william/backup/
+export DIR=/home/julio/backup/
 USER_DB=postgres
 NAME_DB=apolo
 cd $DIR

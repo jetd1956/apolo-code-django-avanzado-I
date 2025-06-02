@@ -4,8 +4,8 @@ NAME="apolo"
 DJANGODIR=$(dirname $(cd `dirname $0` && pwd))
 SOCKFILE=/tmp/gunicorn-apolo.sock
 LOGDIR=${DJANGODIR}/logs/gunicorn.log
-USER=william
-GROUP=william
+USER=julio
+GROUP=julio
 NUM_WORKERS=5
 DJANGO_WSGI_MODULE=config.wsgi
 

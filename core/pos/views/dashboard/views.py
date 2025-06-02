@@ -2,7 +2,7 @@ from datetime import datetime
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Sum, FloatField
-from django.db.models.functions import Coalesce
+from django.db.models.functions import Cast
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.generic import TemplateView
@@ -25,7 +25,8 @@ class DashboardView(LoginRequiredMixin, TemplateView):
                 points = []
                 year = datetime.now().year
                 for m in range(1, 13):
-                    total = Sale.objects.filter(date_joined__year=year, date_joined__month=m).aggregate(result=Coalesce(Sum('total'), 0.00, output_field=FloatField())).get('result')
+                    #total = Sale.objects.filter(date_joined__year=year, date_joined__month=m).aggregate(result=Coalesce(Sum('total'), 0.00, output_field=FloatField())).get('result')
+                    total = Sale.objects.filter(date_joined__year=year, date_joined__month=m).aggregate(r=Sum(Cast('total', output_field=FloatField()))).get('r') or 0
                     points.append(float(total))
                 data = {
                     'name': 'Porcentaje de venta',
@@ -38,7 +39,8 @@ class DashboardView(LoginRequiredMixin, TemplateView):
                 year = datetime.now().year
                 month = datetime.now().month
                 for p in Product.objects.filter():
-                    total = SaleProduct.objects.filter(sale__date_joined__year=year, sale__date_joined__month=month, product_id=p.id).aggregate(result=Coalesce(Sum('subtotal'), 0, output_field=FloatField())).get('result')
+                    #total = SaleProduct.objects.filter(sale__date_joined__year=year, sale__date_joined__month=month, product_id=p.id).aggregate(result=Coalesce(Sum('subtotal'), 0, output_field=FloatField())).get('result')
+                    total = SaleProduct.objects.filter(sale__date_joined__year=year, sale__date_joined__month=month, product_id=p.id).aggregate(r=Sum(Cast('subtotal', output_field=FloatField()))).get('r') or 0
                     if total > 0:
                         points.append({'name': p.name,'y': float(total)})
                 data = {
