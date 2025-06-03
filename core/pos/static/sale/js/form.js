@@ -1,6 +1,7 @@
 var tblProducts;
 var select_client, select_search_product;
 var tblSearchProducts;
+var busqueda = '';
 
 var sale = {
     details: {
@@ -54,6 +55,9 @@ var sale = {
                     targets: [-4],
                     class: 'text-center',
                     render: function (data, type, row) {
+                        if(!row.is_inventoried){
+                             return '<span class="badge badge-secondary">Sin stock</span>';
+                        }
                         return '<span class="badge badge-secondary">' + data + '</span>';
                     }
                 },
@@ -94,7 +98,7 @@ var sale = {
 
                 $(row).find('input[name="cant"]').TouchSpin({
                     min: 1,
-                    max: data.stock,
+                    max: data.is_inventoried ? row.stock : 1000000,
                     step: 1
                 });
 
@@ -110,6 +114,7 @@ $(function () {
 
     select_client = $('select[name="client"]');
     select_search_product = $('select[name="search_product"]');
+
 
     $('.select2').select2({
         theme: "bootstrap4",
@@ -217,6 +222,7 @@ $(function () {
                 'X-CSRFToken': csrftoken
             },
             data: function (params) {
+                busqueda = (params.term);
                 return {
                     term: params.term,
                     action: 'search_products_select2',
@@ -239,6 +245,8 @@ $(function () {
             if (!Number.isInteger(repo.id)) {
                 return repo.text;
             }
+            // video 25 de django avanzado I
+            var stock = repo.is_inventoried ? repo.stock : 'Sin stock';
 
             return $(
                 '<div class="wrapper container">' +
@@ -250,7 +258,7 @@ $(function () {
                 //'<br>' +
                 '<p style="margin-bottom: 0;">' +
                 '<b>Nombre:</b> ' + repo.full_name + '<br>' +
-                '<b>Stock:</b> ' + repo.stock + '<br>' +
+                '<b>Stock:</b> ' + stock + '<br>' +
                 '<b>PVP:</b> <span class="badge badge-warning">$' + repo.pvp + '</span>' +
                 '</p>' +
                 '</div>' +
@@ -306,6 +314,7 @@ $(function () {
     });
 
     $('.btnSearchProducts').on('click', function () {
+        // console.log(busqueda);
         tblSearchProducts = $('#tblSearchProducts').DataTable({
             responsive: true,
             autoWidth: false,
@@ -317,7 +326,7 @@ $(function () {
                 data: {
                     'action': 'search_products',
                     'ids': JSON.stringify(sale.getProductsIds()),
-                    'term': select_search_product.val()
+                    'term': busqueda, //select_search_product.val()
                 },
                 dataSrc: "",
                 headers: {
@@ -344,6 +353,9 @@ $(function () {
                     targets: [-3],
                     class: 'text-center',
                     render: function (data, type, row) {
+                        if (!row.is_inventoried) {
+                            return '<span class="badge badge-secondary">Sin stock</span>';
+                        }
                         return '<span class="badge badge-secondary">' + data + '</span>';
                     }
                 },
@@ -369,6 +381,7 @@ $(function () {
 
             }
         });
+        busqueda = '';
         $('#myModalSearchProducts').modal('show');
     });
 
